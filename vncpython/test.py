@@ -28,9 +28,15 @@ async def run_client():
             pixels = await client.screenshot()
             # Save as PNG using PIL/pillow
             image = Image.fromarray(pixels)
-            image.save('screenshot1.png')
+            image.save('screenshot0.png')
 
         socket_toem('REL_X:emit:5:False')
         socket_toem('REL_Y:emit:5:True')
+
+        with client.keyboard.hold('Tab'):
+            pixels = await client.screenshot()
+            # Save as PNG using PIL/pillow
+            image = Image.fromarray(pixels)
+            image.save('screenshot1.png')
 
 asyncio.run(run_client())
