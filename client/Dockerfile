@@ -29,7 +29,7 @@ RUN make
 WORKDIR /src/BetterSpades/build/BetterSpades
 CMD ./client -aos://3770404938:32887
 RUN pip3 install python-uinput
-RUN modprobe -i uinput
+RUN modprobe -i uinput; exit 0
 # RUN modprobe uinput
 
 RUN python3 /src/uinput_server.py; exit 0
