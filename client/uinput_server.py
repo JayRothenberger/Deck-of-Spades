@@ -31,7 +31,7 @@ if __name__ == "__main__":
             if cmd == 'emit':
                 emit = True
 
-            fn = getattr(uinput, fn)
+            fn = getattr(device, fn)
             cmd = getattr(uinput, cmd)
             value = int(value)
             syn = bool(syn)
