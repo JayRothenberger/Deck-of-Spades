@@ -10,7 +10,7 @@ SOCK = socket.socket(socket.AF_INET, # Internet
 
 
 def socket_toem(cmd):
-    SOCK.sendto(cmd, (UDP_IP, UDP_PORT))
+    SOCK.sendto(cmd.encode(), (UDP_IP, UDP_PORT))
 
 
 async def run_client():
