@@ -3,8 +3,9 @@ docker build -t server_image .
 docker run server_image piqueserver -c '/src/piqueserver/piqueserver/config/config.toml' -d '/src/piqueserver/piqueserver/config/'
 
 # to build the client running in the container in the client folder do:
-docker run -d -p 5901:5901 -p 6901:6901 -p 5903:5903 agent_image
 docker build -t agent_image .
+docker run -d -p 5901:5901 -p 6901:6901 -p 5903:5903 agent_image
+
 
 # to connect to the vnc client programmatically do:
 mamba create -n vncspades
