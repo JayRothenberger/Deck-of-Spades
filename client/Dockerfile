@@ -3,7 +3,7 @@ FROM consol/debian-xfce-vnc
 ENV REFRESHED_AT 2023-11-10
 # Switch to root user to install additional software
 USER 0
-EXPOSE 5005
+EXPOSE 5005/udp
 ## Install a gedit
 RUN apt-get update
 RUN apt-get install -y --fix-missing libgl1-mesa-dev libopenal1 libopenal-dev libglfw3-dev libenet-dev libglew-dev git cmake python3.10 python3-pip libudev1 libudev-dev python3-uinput
@@ -34,4 +34,4 @@ RUN modprobe -i uinput; exit 0
 
 RUN python3 /src/uinput_server.py; exit 0
 ## switch back to default user
-USER 1000
+# USER 1000
