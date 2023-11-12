@@ -23,7 +23,8 @@ if __name__ == "__main__":
         while True:
             emit = True
 
-            data, addr = sock.recvfrom(256).decode('utf8') # buffer size is 256 bytes
+            data, addr = sock.recvfrom(256) # buffer size is 256 bytes
+            data = data.decode('utf8')
             print(data)
             cmd, fn, value, syn = data.split(':')
 

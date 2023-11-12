@@ -3,7 +3,6 @@ FROM consol/debian-xfce-vnc
 ENV REFRESHED_AT 2023-11-10
 # Switch to root user to install additional software
 USER 0
-EXPOSE 5005/udp
 ## Install a gedit
 RUN apt-get update
 RUN apt-get install -y --fix-missing libgl1-mesa-dev libopenal1 libopenal-dev libglfw3-dev libenet-dev libglew-dev git cmake python3.10 python3-pip libudev1 libudev-dev python3-uinput
