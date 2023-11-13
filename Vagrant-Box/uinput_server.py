@@ -2,7 +2,7 @@ import socket
 import uinput
 
 if __name__ == "__main__":
-    print('- uinput server started -')
+    print('- running uinput server -')
     UDP_IP = "127.0.0.1"
     UDP_PORT = 5005
 
@@ -16,8 +16,8 @@ if __name__ == "__main__":
         for line in fp.readlines():
             cmd_strings.append(line.split(' ')[0])
 
-    events = tuple([getattr(uinput, cmd) for cmd in cmd_strings])
-    # events = (uinput.REL_X, uinput.REL_Y)
+    # events = tuple([getattr(uinput, cmd) for cmd in cmd_strings])
+    events = (uinput.KEY_1, uinput.KEY_2, uinput.BTN_LEFT, uinput.REL_X, uinput.REL_Y)
 
     with uinput.Device(events) as device:
 
