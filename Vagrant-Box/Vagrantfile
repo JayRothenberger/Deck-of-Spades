@@ -1,11 +1,12 @@
 Vagrant.configure("2") do |config|
     config.vm.box = "debian/bookworm64"
+    config.disksize.size = '32GB'
     config.vm.provision :shell, path: "bootstrap.sh"
     config.vm.network "public_network", ip: "192.168.0.17"
     config.vm.network "forwarded_port", guest: 5005, host: 5050
     config.vm.provider :virtualbox do |vb|
-        vb.memory = 2048
-        vb.cpus = 2
+        vb.memory = 6096
+        vb.cpus = 4
         vb.gui = true
     end
 end

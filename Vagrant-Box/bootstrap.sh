@@ -22,11 +22,13 @@ export DISPLAY=:1.0
 
 python3 -m venv /home/venv
 source /home/venv/bin/activate
-pip3 install asyncvnc Pillow
+cd /vagrant
 
-cd /vagrant/python-uinput-master
+cd /vagrant/python-uinput
 python3 setup.py build
 python3 setup.py install
+
+pip3 install -r /vagrant/requirements.txt
 
 modprobe -i uinput
 # RUN modprobe uinput
@@ -36,6 +38,4 @@ cd /vagrant/BetterSpades/build/BetterSpades
 
 # python3 /vagrant/uinput_server.py &
 
-python3 /vagrant/vncpython/run.py
-# startxfce4
-
+python3 /vagrant/run.py
