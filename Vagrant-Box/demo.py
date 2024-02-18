@@ -14,6 +14,7 @@ from units.transform import Compose
 
 # for visualization
 font = ImageFont.truetype("/vagrant/TC/Georgia.ttf", size=12)
+torch.jit.enable_onednn_fusion(True)
 
 DETECT_TYPE = "box"  # 'single', 'box', 'quad', 'polygon'
 
@@ -69,6 +70,7 @@ def run_ocr(model, img, transform, collator, detect_type):
         coord_resize: [coord1, coord2, coord3, ...]
         texts: [text1, text2, text3, ...]
     """
+    start = time.time()
     conf = load_config(E2EConfig, '/vagrant/finetune.py', show=False)
     transform = Compose(instantiate(conf.evaluate.transform))
     collator = MultitaskCollator([], evaluate=True)
@@ -81,7 +83,9 @@ def run_ocr(model, img, transform, collator, detect_type):
     sample.image_size = (n_h, n_w)  # resized inputs
 
     batch = collator([(img, sample)])  # batch size 1
+    print(f'setup time: {time.time() - start}')
 
+    start = time.time()
     with torch.inference_mode():
         batch = batch.to('cpu')
         out = model(batch, detect_type)
@@ -92,7 +96,7 @@ def run_ocr(model, img, transform, collator, detect_type):
     coord_resize = torch.stack(out.coords, 0).numpy()
     coord_resize = resize_instance(coord_resize, (n_h, n_w), (o_h, o_w))
     coord_resize = coord_resize.round().astype(np.int64).tolist()
-
+    print(f'inference time: {time.time() - start}')
     return (
         coord_resize,
         out.texts,
@@ -121,7 +125,7 @@ def load_model():
 
 
 
-def draw_and_return_ocr(model, img, transform, collator, DETECT_TYPE='polygon'):
+def draw_and_return_ocr(model, img, transform, collator, DETECT_TYPE='single'):
     start = time.time()
     coords, texts = run_ocr(model, img, transform, collator, DETECT_TYPE)
     print(time.time() - start)

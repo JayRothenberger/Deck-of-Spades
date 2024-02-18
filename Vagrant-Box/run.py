@@ -1,5 +1,6 @@
 import time
 import uinput
+import torch
 import ctypes
 import os
 from PIL import Image, ImageOps
@@ -72,9 +73,34 @@ def main():
         img_out.save('/vagrant/screenshot_labeled.png')
         im.save('/vagrant/screenshot1.png')
         start = time.time()
-        out = DINOv2.forward_features(DINOv2_transform(img_out).unsqueeze(0))
-        print(time.time() - start)
+        ff = DINOv2_transform(img_out).unsqueeze(0)
+        out = DINOv2.forward_features(ff)
         print([key for key in out.keys()])
+
+        torch._C._jit_set_autocast_mode(False)
+
+        DINOv2.forward = lambda x: DINOv2.forward_features(x)['x_norm_patchtokens']
+        traced_inf = torch.jit.trace(DINOv2, ff)
+        traced_inf = torch.jit.freeze(traced_inf)
+        print(f'trace time: {time.time() - start}')
+        
+        start = time.perf_counter()
+        with torch.no_grad():
+            out = traced_inf(ff)
+            out = traced_inf(ff)
+            out = traced_inf(ff)
+        print(f'traced time: {time.perf_counter() - start} - {out.shape}')
+
+        start1 = time.perf_counter()
+        with torch.no_grad():
+            out = traced_inf(ff)
+        print(f'traced time 2: {time.perf_counter() - start1} - {out.shape}')
+
+        start = time.perf_counter()
+        out = DINOv2(ff)
+        print(f'untraced time: {time.perf_counter() - start}')
+        
+        # print([key for key in out.keys()])
 
 if __name__ == "__main__":
     main()

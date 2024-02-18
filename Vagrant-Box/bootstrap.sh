@@ -37,5 +37,5 @@ cd /vagrant/BetterSpades/build/BetterSpades
 ./client -aos://3770404938:32887 &
 
 # python3 /vagrant/uinput_server.py &
-
-python3 /vagrant/run.py
+export LD_PRELOAD=jemalloc.so$LD_PRELOAD
+python3 /vagrant/run.py --jit_mode_eval

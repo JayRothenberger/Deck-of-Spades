@@ -13,3 +13,4 @@ rapidfuzz
 Polygon3
 editdistance
 asyncvnc
+intel_extension_for_pytorch

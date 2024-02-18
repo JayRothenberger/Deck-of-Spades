@@ -1,5 +1,6 @@
 import math
 from typing import List
+import time
 
 import torch
 from pydantic import StrictBool, StrictInt
@@ -187,6 +188,8 @@ class VisionTransformer(nn.Module):
         super().__init__()
 
         self.backbone, self.backbone_dims = backbone
+    
+        self.backbone = self.backbone
         feat_ids = [int(math.log(stride, 2)) - 1 for stride in strides]
         self.feat_ids = feat_ids
 
@@ -201,6 +204,7 @@ class VisionTransformer(nn.Module):
     #     self.apply(init_weights)
 
     def forward(self, batch):
+        start = time.time()
         patch_size = self.backbone.patch_embed.patch_size
         if self.wo_source_pos_encod:
             feats_all = self.backbone(batch.images)
@@ -210,7 +214,7 @@ class VisionTransformer(nn.Module):
         feats, mask, shapes = self.prepare_inps(
             feats_all[self.feat_ids[0] : self.feat_ids[-1] + 1], batch.masks
         )
-
+        print(f'encoder forward time: {time.time() - start} ({feats.shape})')
         return feats, mask, shapes
 
     def compute_input_pos(self, patch_size, mask):
@@ -298,6 +302,7 @@ class Units(nn.Module):
         self.proj_mlp.apply(init_weights)
 
     def forward(self, batch, detect_type=None):
+        start = time.time()
         encoded_feats, mask, shapes = self.encoder(batch)
 
         encoded_feats = self.connector(encoded_feats)
@@ -306,14 +311,15 @@ class Units(nn.Module):
         else:
             pos = self.compute_pos_embed(shapes, batch.masks)
             encoded_feats = self.proj_mlp(encoded_feats + pos)
-
+        print(f'encoding time: {time.time() - start}')
+        start = time.time()
         outputs = self.decoder(
             batch,
             encoded_feats,
             mask,
             detect_type,
         )
-
+        print(f'decoding time: {time.time() - start}')
         return outputs
 
     def compute_pos_embed(self, shapes, mask):
